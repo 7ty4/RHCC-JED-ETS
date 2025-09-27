@@ -31,7 +31,7 @@
     margin: 1rem 0 0.5rem;
     font-weight: 600;
   }
-  select, input[type="date"], textarea {
+  select, input[type="date"], input[type="password"], textarea {
     width: 100%;
     padding: 0.5rem;
     font-size: 1rem;
@@ -82,8 +82,7 @@
 </style>
 </head>
 <body>
-<!-- Banner image added below -->
-<img src="Banner Image 2025-09-25 at 08.38.59.jpeg" alt="Survey Banner" style="width:100%; height:auto; display:block; margin-bottom:12px;" />
+<img src="WhatsApp-Image-2025-09-25-at-08.38.59.jpg" alt="Survey Banner" style="width:100%; height:auto; display:block; margin-bottom:12px;" />
 
 <header>
   <h1>استبيان المهام اليومية للموظفين</h1>
@@ -115,6 +114,11 @@
   <label for="date">التاريخ *</label>
   <input type="date" id="date" name="date" required />
   <span class="error-message" id="dateError"></span>
+
+  <!-- Added password input -->
+  <label for="password">كلمة السر *</label>
+  <input type="password" id="password" name="password" required />
+  <span class="error-message" id="passwordError"></span>
 
   <div id="tasksContainer">
     <label>المهام اليومية *</label>
