@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>استبيان المهام اليومية للموظفين</title>
+<style>
+  body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #fcfcf9;
+    color: #1f2121;
+    margin: 0;
+    padding: 0 1rem;
+  }
+  header {
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: 2px solid #2e8b57;
+    color: #2e8b57;
+  }
+  form {
+    max-width: 700px;
+    margin: 1rem auto;
+    background: white;
+    padding: 1rem 2rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #ccc;
+  }
+  label {
+    display: block;
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+  }
+  select, input[type="date"], textarea {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #2e8b57;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  .task-row {
+    border: 1px solid #2e8b57;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    position: relative;
+  }
+  .task-row button.remove-task-btn {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button#addTaskBtn, button[type="submit"] {
+    background-color: #2e8b57;
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  button#addTaskBtn:hover, button[type="submit"]:hover {
+    background-color: #267645;
+  }
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+</style>
+</head>
+<body>
+<!-- Banner image added below -->
+<img src="WhatsApp-Image-2025-09-25-at-08.38.59.jpg" alt="Survey Banner" style="width:100%; height:auto; display:block; margin-bottom:12px;" />
+
+<header>
+  <h1>استبيان المهام اليومية للموظفين</h1>
+</header>
+<form id="surveyForm" method="POST" action="https://script.google.com/macros/s/AKfycbwag8xG4YaOtoHIb61ILpy3p_tuk2cRNoHqV35rYOXC-y556Aazc_R7P1a-4Xh4Z8Gy6g/exec" target="hidden_iframe" onsubmit="submitted=true;">
+  <label for="employeeName">اسم الموظف *</label>
+  <select id="employeeName" name="employeeName" required>
+    <option value="">اختر الموظف</option>
+    <option>منال بن يامين</option>
+    <option>إلهام الجرب</option>
+    <option>وضحى باخشوين</option>
+    <option>تهاني قلمبان</option>
+    <option>د. حسام بامشموس</option>
+    <option>حسين المالكي</option>
+    <option>منى الحياني</option>
+  </select>
+  <span class="error-message" id="employeeNameError"></span>
+
+  <label for="unit">الوحدة *</label>
+  <select id="unit" name="unit" required>
+    <option value="">اختر الوحدة</option>
+    <option>وحدة التذاكر</option>
+    <option>وحدة الارتباط</option>
+    <option>وحدة تحليل البيانات</option>
+    <option>أخرى</option>
+  </select>
+  <span class="error-message" id="unitError"></span>
+
+  <label for="date">التاريخ *</label>
+  <input type="date" id="date" name="date" required />
+  <span class="error-message" id="dateError"></span>
+
+  <div id="tasksContainer">
+    <label>المهام اليومية *</label>
+  </div>
+
+  <button type="button" id="addTaskBtn">إضافة مهمة</button>
+  <br />
+  <button type="submit">إرسال</button>
+</form>
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {alert('تم إرسال الاستبيان بنجاح!');document.getElementById('surveyForm').reset(); resetTasks(); submitted=false;}"></iframe>
+
+<script>
+  let submitted = false;
+  const tasksContainer = document.getElementById('tasksContainer');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  let taskCounter = 0;
+
+  const taskTypes = ['تقرير', 'تواصل', 'تصعيد', 'حضور إجتماع', 'محضر', 'أخرى'];
+
+  function createTaskRow(id) {
+    const div = document.createElement('div');
+    div.classList.add('task-row');
+    div.id = `task-${id}`;
+
+    const select = document.createElement('select');
+    select.name = `taskType-${id}`;
+    select.required = true;
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'اختر نوع المهمة';
+    select.appendChild(defaultOption);
+    taskTypes.forEach(type => {
+      const option = document.createElement('option');
+      option.textContent = type;
+      select.appendChild(option);
+    });
+
+    const textarea = document.createElement('textarea');
+    textarea.name = `taskDesc-${id}`;
+    textarea.placeholder = 'وصف المهمة';
+    textarea.required = true;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.classList.add('remove-task-btn');
+    removeBtn.textContent = 'حذف المهمة';
+    removeBtn.onclick = () => {
+      tasksContainer.removeChild(div);
+    };
+
+    div.appendChild(select);
+    div.appendChild(textarea);
+    div.appendChild(removeBtn);
+
+    return div;
+  }
+
+  function addTask() {
+    taskCounter++;
+    const taskRow = createTaskRow(taskCounter);
+    tasksContainer.appendChild(taskRow);
+  }
+
+  function resetTasks() {
+    tasksContainer.innerHTML = '';
+    taskCounter = 0;
+    addTask();
+  }
+
+  addTaskBtn.onclick = addTask;
+
+  window.onload = () => {
+    addTask();
+    // default date to today
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+  };
+</script>
+</body>
+</html>
